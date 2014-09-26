@@ -1,4 +1,4 @@
-# kwest-gzip
+# kwest-gzip [![Build Status][travis-image]][travis-url] [![Dependency Status][depstat-image]][depstat-url]
 
 gzip plugin for the [kwest](https://github.com/Janpot/kwest) module
 
@@ -20,3 +20,11 @@ request('http://www.example.com/gzipped')
     // logs gunzipped body
     console.log(res.body);
   })
+```
+
+
+[travis-url]: http://travis-ci.org/Janpot/kwest-gzip
+[travis-image]: http://img.shields.io/travis/Janpot/kwest-gzip.svg?style=flat
+
+[depstat-url]: https://david-dm.org/Janpot/kwest-gzip
+[depstat-image]: http://img.shields.io/david/Janpot/kwest-gzip.svg?style=flat

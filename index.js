@@ -1,15 +1,14 @@
 'use strict';
 
 var Promise = require('bluebird'),
-    zlib    = require('zlib'),
-    gunzip  = Promise.promisify(zlib.gunzip);
+    gunzip  = Promise.promisify(require('zlib').gunzip);
 
 
-function kwestGzip(request) {
-  return request.wrap(function (makeRequest, options) {
-    options.headers['accept-encoding'] = 'gzip';
+function kwestGzip(kwest) {
+  return kwest.wrap(function (makeRequest, request) {
+    request.headers['accept-encoding'] = 'gzip';
 
-    return makeRequest(options)
+    return makeRequest(request)
       .then(function (response) {
         var contentEnc = response.headers['content-encoding'];
         contentEnc = contentEnc && contentEnc.trim().toLowerCase();
