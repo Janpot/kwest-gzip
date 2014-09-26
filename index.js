@@ -22,9 +22,6 @@ function kwestGzip(request) {
           .then(function (unzipped) {
             response.body = unzipped;
             return response;
-          })
-          .catch(function () {
-            return response;
           });
       });
   });

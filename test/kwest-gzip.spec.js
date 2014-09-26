@@ -54,5 +54,30 @@ describe('kwest-gzip', function () {
 
   });
 
+  it('faulty gzip', function (done) {
+
+    var kwestMock = kwest.wrap(function (makeRequest, options) {
+      assert.propertyVal(options.headers, 'accept-encoding', 'gzip');
+      return Promise.resolve({
+        body: 'hello',
+        headers: {
+          'content-encoding': 'gzip'
+        }
+      });
+    });
+
+    var gzip = kwestGzip(kwestMock);
+    gzip.get('http://www.example.com')
+      .then(function (res) {
+        done(new Error('should fail'));
+      })
+      .catch(function (err) {
+        done();
+      });
+
+  });
+
+
+
 
 });
