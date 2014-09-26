@@ -8,7 +8,7 @@ gzip plugin for the [kwest](https://github.com/Janpot/kwest) module
 
 ## Use
 
-enable gzip for quest
+enable gzip for kwest
 ```js
 var kwestGzip = require('kwest-gzip'),
     kwest = require('kwest'),
