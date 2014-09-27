@@ -1,6 +1,6 @@
 var kwestGzip = require('..'),
     Promise   = require('bluebird'),
-    kwest     = require('kwest'),
+    kwest     = require('kwest-base'),
     zlib      = require('zlib'),
     assert    = require('chai').assert;
 
@@ -8,20 +8,21 @@ describe('kwest-gzip', function () {
 
   it('no gzip', function (done) {
 
-    var kwestMock = kwest.wrap(function (makeRequest, options) {
-      assert.propertyVal(options.headers, 'accept-encoding', 'gzip');
+    var kwestMock = kwest.wrap(function (request, next) {
+      assert.ok(request.headers.has('accept-encoding'));
       return Promise.resolve({
         body: 'hello',
         headers: {}
       });
     });
 
-    var gzip = kwestGzip(kwestMock);
-    gzip.get('http://www.example.com')
+    var gzip = kwestMock.wrap(kwestGzip());
+    gzip('http://www.example.com')
       .then(function (res) {
         assert.deepPropertyVal(res, 'body', 'hello');
         done();
-      });
+      })
+      .catch(done);
 
   });
 
@@ -32,8 +33,8 @@ describe('kwest-gzip', function () {
         return done(err);
       }
 
-      var kwestMock = kwest.wrap(function (makeRequest, options) {
-        assert.propertyVal(options.headers, 'accept-encoding', 'gzip');
+      var kwestMock = kwest.wrap(function (request, next) {
+        assert.ok(request.headers.has('accept-encoding'));
         return Promise.resolve({
           body: gzipped,
           headers: {
@@ -42,13 +43,14 @@ describe('kwest-gzip', function () {
         });
       });
 
-      var gzip = kwestGzip(kwestMock);
-      gzip.get('http://www.example.com')
+      var gzip = kwestMock.wrap(kwestGzip());
+      gzip('http://www.example.com')
         .then(function (res) {
           var body = String(res.body);
           assert.strictEqual(body, 'hello');
           done();
-        });
+        })
+        .catch(done);
 
     });
 
@@ -56,8 +58,8 @@ describe('kwest-gzip', function () {
 
   it('faulty gzip', function (done) {
 
-    var kwestMock = kwest.wrap(function (makeRequest, options) {
-      assert.propertyVal(options.headers, 'accept-encoding', 'gzip');
+    var kwestMock = kwest.wrap(function (request, next) {
+      assert.ok(request.headers.has('accept-encoding'));
       return Promise.resolve({
         body: 'hello',
         headers: {
@@ -66,14 +68,15 @@ describe('kwest-gzip', function () {
       });
     });
 
-    var gzip = kwestGzip(kwestMock);
-    gzip.get('http://www.example.com')
+    var gzip = kwestMock.wrap(kwestGzip());
+    gzip('http://www.example.com')
       .then(function (res) {
         done(new Error('should fail'));
       })
-      .catch(function (err) {
+      .catch(kwestGzip.GzipError, function (err) {
         done();
-      });
+      })
+      .catch(done);
 
   });
 

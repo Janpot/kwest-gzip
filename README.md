@@ -1,6 +1,6 @@
 # kwest-gzip [![Build Status][travis-image]][travis-url] [![Dependency Status][depstat-image]][depstat-url]
 
-gzip plugin for the [kwest](https://github.com/Janpot/kwest) module
+gzip middleware for the [kwest](https://github.com/Janpot/kwest) module
 
 ## Installation
 
@@ -11,8 +11,8 @@ gzip plugin for the [kwest](https://github.com/Janpot/kwest) module
 enable gzip for kwest
 ```js
 var kwestGzip = require('kwest-gzip'),
-    kwest = require('kwest'),
-    request = kwestGzip(kwest);
+    kwest     = require('kwest'),
+    request   = kwest.wrap(kwestGzip());
 
 // requests with "accept-encoding: gzip" header
 request('http://www.example.com/gzipped')
