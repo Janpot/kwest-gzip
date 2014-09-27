@@ -7,18 +7,22 @@ var kwestGzip = require('..'),
 
 describe('kwest-gzip', function () {
 
+  function mockResponse(response) {
+    response.headers = response.headers || {};
+    caseless.httpify(response, response.headers);
+    return Promise.resolve(response);
+  }
+
   it('no gzip', function (done) {
 
-    var kwestMock = kwest.wrap(function (request, next) {
-      assert.ok(request.headers.has('accept-encoding'));
-      return Promise.resolve({
-        body: 'hello',
-        headers: caseless({})
+    var gzipRequest = kwest(function (request) {
+      assert.strictEqual(request.getHeader('accept-encoding'), 'gzip');
+      return mockResponse({
+        body: 'hello'
       });
-    });
+    }).use(kwestGzip());
 
-    var gzip = kwestMock.wrap(kwestGzip());
-    gzip('http://www.example.com')
+    gzipRequest('http://www.example.com')
       .then(function (res) {
         assert.deepPropertyVal(res, 'body', 'hello');
         done();
@@ -34,18 +38,16 @@ describe('kwest-gzip', function () {
         return done(err);
       }
 
-      var kwestMock = kwest.wrap(function (request, next) {
-        assert.ok(request.headers.has('accept-encoding'));
-        return Promise.resolve({
+      var gzipRequest = kwest(function (request) {
+        return mockResponse({
           body: gzipped,
-          headers: caseless({
+          headers: {
             'content-encoding': 'gzip'
-          })
+          }
         });
-      });
+      }).use(kwestGzip());
 
-      var gzip = kwestMock.wrap(kwestGzip());
-      gzip('http://www.example.com')
+      gzipRequest('http://www.example.com')
         .then(function (res) {
           var body = String(res.body);
           assert.strictEqual(body, 'hello');
@@ -59,18 +61,16 @@ describe('kwest-gzip', function () {
 
   it('faulty gzip', function (done) {
 
-    var kwestMock = kwest.wrap(function (request, next) {
-      assert.ok(request.headers.has('accept-encoding'));
-      return Promise.resolve({
+    var gzipRequest = kwest(function (request) {
+      return mockResponse({
         body: 'hello',
-        headers: caseless({
+        headers: {
           'content-encoding': 'gzip'
-        })
+        }
       });
-    });
+    }).use(kwestGzip());
 
-    var gzip = kwestMock.wrap(kwestGzip());
-    gzip('http://www.example.com')
+    gzipRequest('http://www.example.com')
       .then(function (res) {
         done(new Error('should fail'));
       })

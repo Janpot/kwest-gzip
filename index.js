@@ -14,11 +14,11 @@ GzipError.prototype.constructor = GzipError;
 
 function kwestGzip() {
   return function (request, next) {
-    request.headers.set('accept-encoding', 'gzip');
+    request.setHeader('accept-encoding', 'gzip');
 
     return next(request)
       .then(function (response) {
-        var contentEnc = response.headers.get('content-encoding');
+        var contentEnc = response.getHeader('content-encoding');
         contentEnc = contentEnc && contentEnc.trim().toLowerCase();
             
         if (contentEnc !== 'gzip') {
