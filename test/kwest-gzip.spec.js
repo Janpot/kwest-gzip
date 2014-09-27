@@ -2,6 +2,7 @@ var kwestGzip = require('..'),
     Promise   = require('bluebird'),
     kwest     = require('kwest-base'),
     zlib      = require('zlib'),
+    caseless  = require('caseless'),
     assert    = require('chai').assert;
 
 describe('kwest-gzip', function () {
@@ -12,7 +13,7 @@ describe('kwest-gzip', function () {
       assert.ok(request.headers.has('accept-encoding'));
       return Promise.resolve({
         body: 'hello',
-        headers: {}
+        headers: caseless({})
       });
     });
 
@@ -37,9 +38,9 @@ describe('kwest-gzip', function () {
         assert.ok(request.headers.has('accept-encoding'));
         return Promise.resolve({
           body: gzipped,
-          headers: {
+          headers: caseless({
             'content-encoding': 'gzip'
-          }
+          })
         });
       });
 
@@ -62,9 +63,9 @@ describe('kwest-gzip', function () {
       assert.ok(request.headers.has('accept-encoding'));
       return Promise.resolve({
         body: 'hello',
-        headers: {
+        headers: caseless({
           'content-encoding': 'gzip'
-        }
+        })
       });
     });
 

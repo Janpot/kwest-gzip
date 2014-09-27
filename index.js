@@ -18,7 +18,7 @@ function kwestGzip() {
 
     return next(request)
       .then(function (response) {
-        var contentEnc = response.headers['content-encoding'];
+        var contentEnc = response.headers.get('content-encoding');
         contentEnc = contentEnc && contentEnc.trim().toLowerCase();
             
         if (contentEnc !== 'gzip') {
